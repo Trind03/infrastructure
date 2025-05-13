@@ -1,0 +1,19 @@
+from sys import exit
+import subprocess
+import requests
+
+SERVER_ADDR = "https://gitlab.com/Trinde03/authorized_keys/-/raw/main/authorized.json?ref_type=heads"
+
+def update_copy():
+    global SERVER_ADDR
+    data = requests.get(SERVER_ADDR)
+    
+    return data.text
+
+def main() -> int:
+    mydata = update_copy()
+    print(mydata)
+
+if __name__ == "__main__":
+    exit_code: int = main()
+    exit(exit_code)
