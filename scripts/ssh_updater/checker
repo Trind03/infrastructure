@@ -1,6 +1,10 @@
 from sys import exit
 import subprocess
 import requests
+import time
+import sched
+import defaults
+import argumemntparser
 
 SERVER_ADDR = "https://gitlab.com/Trinde03/authorized_keys/-/raw/main/authorized.json?ref_type=heads"
 
