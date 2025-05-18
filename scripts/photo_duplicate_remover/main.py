@@ -1,28 +1,40 @@
-""" Application for iterating reqursavly thro an library,
+"""Application for iterating reqursavly thro an library,
 of photos and remove or point out duplicates"""
 
 import argparse
 import sys
 from os import getcwd, walk, path
 import hashlib
+from defaults import ARGUMENT_DESCRIPTOR
+
 
 class ARGUMENTPARSER:
-    """ Program spesific wrapper around argparse. """
+    """Program spesific wrapper around argparse."""
+
     def __init__(self):
         self.root_path = None
 
         self.parser = argparse.ArgumentParser("photorm")
 
-        self.parser.add_argument("-","--kill",action="store_true",
-                                 help="removes duplicate photos uppon descovery")
+        self.parser.add_argument(
+            "-k", "--kill", action="store_true", help=ARGUMENT_DESCRIPTOR.KILL
+        )
 
-        self.parser.add_argument("--wsroot",type=str,
-                            help="defines starting point for search",default=getcwd())
+        self.parser.add_argument(
+            "--wsroot", type=str, help=ARGUMENT_DESCRIPTOR.WSROOT, default=getcwd()
+        )
+
+        self.parser.add_argument(
+            "--infra-mode",
+            action="store_true",
+            default=False,
+            help=ARGUMENT_DESCRIPTOR.INFRA_MODE,
+        )
 
         self.argv = self.parser.parse_args(sys.argv[1:])
 
 
-def hash_my_stuff(filename,algoithm="sha256",read_block_size=128):
+def hash_my_stuff(filename, algoithm="sha256", read_block_size=128):
     """Reads file in chunks & returns checksum of contents.
 
     Args:
@@ -35,7 +47,7 @@ def hash_my_stuff(filename,algoithm="sha256",read_block_size=128):
     """
     composite = hashlib.new(algoithm)
     try:
-        with open(filename,"rb") as file:
+        with open(filename, "rb") as file:
             while chunk := file.read(read_block_size):
                 composite.update(chunk)
         return composite.hexdigest()
@@ -43,11 +55,12 @@ def hash_my_stuff(filename,algoithm="sha256",read_block_size=128):
     except Exception as error:
         print(error)
 
+
 def find_files(root_path) -> list[str]:
     """Find all duplicate files, by computing the hash of all files.
 
     Args:
-        root_path (str): root dir ie(where function start file search.) 
+        root_path (str): root dir ie(where function start file search.)
 
     Returns:
         list[str]: all duplicate files.
@@ -55,7 +68,7 @@ def find_files(root_path) -> list[str]:
     duplicate_photos = []
     mapping = dict()
 
-    for _,_,files in walk(root_path):
+    for _, _, files in walk(root_path):
         for file in files:
             checksum = hash_my_stuff(path.abspath(file))
             if checksum not in mapping.keys():
@@ -67,7 +80,7 @@ def find_files(root_path) -> list[str]:
 
 
 def main() -> int:
-    """ Entrypoint of program. """
+    """Entrypoint of program."""
     arg_parser = ARGUMENTPARSER()
 
     duplicate_files: list[str] = find_files(arg_parser.argv.wsroot)
