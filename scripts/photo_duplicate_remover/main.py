@@ -21,7 +21,7 @@ class ARGUMENTPARSER:
         )
 
         self.parser.add_argument(
-            "--wsroot", type=str, help=ARGUMENT_DESCRIPTOR.WSROOT, default=getcwd()
+            "--wsroot", type=str, help=ARGUMENT_DESCRIPTOR.WSROOT, default=os.getcwd()
         )
 
         self.parser.add_argument(
@@ -52,8 +52,12 @@ def hash_my_stuff(filename, algoithm="sha256", read_block_size=128):
                 composite.update(chunk)
         return composite.hexdigest()
 
-    except Exception as error:
+    except FileNotFoundError as error:
         print(error)
+
+    except FileExistsError as error:
+        print(error)
+
 
 
 def find_files(root_path) -> dict[str]:
