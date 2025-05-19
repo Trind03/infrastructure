@@ -3,7 +3,7 @@ of photos and remove or point out duplicates"""
 
 import argparse
 import sys
-from os import getcwd, walk, path
+import os
 import hashlib
 from defaults import ARGUMENT_DESCRIPTOR
 
@@ -56,7 +56,7 @@ def hash_my_stuff(filename, algoithm="sha256", read_block_size=128):
         print(error)
 
 
-def find_files(root_path) -> list[str]:
+def find_files(root_path) -> dict[str]:
     """Find all duplicate files, by computing the hash of all files.
 
     Args:
@@ -65,29 +65,48 @@ def find_files(root_path) -> list[str]:
     Returns:
         list[str]: all duplicate files.
     """
-    duplicate_photos = []
     mapping = dict()
 
-    for _, _, files in walk(root_path):
+    for _, _, files in os.walk(root_path):
         for file in files:
-            checksum = hash_my_stuff(path.abspath(file))
-            if checksum not in mapping.keys():
-                mapping[checksum] = path.abspath(file)
+            checksum = hash_my_stuff(os.path.abspath(file))
+            if checksum in mapping.keys():
+                print(f"found duplicate of: {os.path.abspath(file)}")
             else:
-                print(f"found duplicate of: {path.abspath(file)}")
+                mapping[checksum] = os.path.abspath(file)
 
-    return duplicate_photos
+    return mapping
 
+def delete(filename) -> int:
+    """Deletes passed file, after verifies if deletion was successful.
+
+    Args:
+        filename (str): name of file to delete.
+
+    Returns:
+        int: status code.
+    """
+    status: int = 0
+    print("deleting found duplicate.")
+    os.remove(filename)
+
+    status = os.path.exists(filename)
+
+    if status != 0:
+        print("removal failure :<")
+        exit(1)
+
+    return status
 
 def main() -> int:
     """Entrypoint of program."""
     arg_parser = ARGUMENTPARSER()
 
-    duplicate_files: list[str] = find_files(arg_parser.argv.wsroot)
+    duplicate_files: dict[str] = find_files(arg_parser.argv.wsroot)
 
     print("These files are duplicates.")
-    for file in duplicate_files:
-        print(f"* {file}")
+    for file in duplicate_files.items():
+        print(f"* {file[1]}")
 
 
 if __name__ == "__main__":
