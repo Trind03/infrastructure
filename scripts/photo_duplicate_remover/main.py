@@ -60,7 +60,7 @@ def hash_my_stuff(filename, algoithm="sha256", read_block_size=128):
 
 
 
-def find_files(root_path) -> dict[str]:
+def find_files(root_path):
     """Find all duplicate files, by computing the hash of all files.
 
     Args:
@@ -69,17 +69,19 @@ def find_files(root_path) -> dict[str]:
     Returns:
         list[str]: all duplicate files.
     """
+    count: int = 0
     mapping = dict()
 
     for _, _, files in os.walk(root_path):
         for file in files:
             checksum = hash_my_stuff(os.path.abspath(file))
             if checksum in mapping.keys():
-                print(f"found duplicate of: {os.path.abspath(file)}")
+                count = count + 1
+                print(f"* {os.path.abspath(file)}")
             else:
                 mapping[checksum] = os.path.abspath(file)
 
-    return mapping
+    return count, mapping
 
 def delete(filename) -> int:
     """Deletes passed file, after verifies if deletion was successful.
@@ -106,11 +108,12 @@ def main() -> int:
     """Entrypoint of program."""
     arg_parser = ARGUMENTPARSER()
 
-    duplicate_files: dict[str] = find_files(arg_parser.argv.wsroot)
-
-    print("These files are duplicates.")
-    for file in duplicate_files.items():
-        print(f"* {file[1]}")
+    counter, duplicate_files = find_files(arg_parser.argv.wsroot)
+    if counter != 0:
+        print(f"Total number of duplicates: {counter}")
+        return 0
+    print("Great! there are no duplicates here :))")
+    return 0
 
 
 if __name__ == "__main__":
