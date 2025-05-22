@@ -1,4 +1,4 @@
-export EDTIOR="nvim"
+export EDITOR="/bin/nvim"
 
 # Aliases
 alias gits="git status"
