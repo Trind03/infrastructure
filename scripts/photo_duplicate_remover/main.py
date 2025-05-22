@@ -17,7 +17,7 @@ class ARGUMENTPARSER:
         self.parser = argparse.ArgumentParser("photorm")
 
         self.parser.add_argument(
-            "-k", "--kill", action="store_true", help=ARGUMENT_DESCRIPTOR.KILL
+            "--xkill", action="store_true", help=ARGUMENT_DESCRIPTOR.KILL
         )
 
         self.parser.add_argument(
@@ -32,6 +32,8 @@ class ARGUMENTPARSER:
         )
 
         self.argv = self.parser.parse_args(sys.argv[1:])
+
+arg_parser = ARGUMENTPARSER()
 
 
 def hash_my_stuff(filename, algoithm="sha256", read_block_size=128):
@@ -76,8 +78,13 @@ def find_files(root_path):
         for file in files:
             checksum = hash_my_stuff(os.path.abspath(file))
             if checksum in mapping.keys():
-                count = count + 1
-                print(f"* {os.path.abspath(file)}")
+                if arg_parser.argv.xkill:
+                    print(f"Erasing {file}")
+                    delete(os.path.abspath(file))
+                else:
+                    count = count + 1
+                    print(f"* {os.path.abspath(file)}")
+
             else:
                 mapping[checksum] = os.path.abspath(file)
 
@@ -106,9 +113,8 @@ def delete(filename) -> int:
 
 def main() -> int:
     """Entrypoint of program."""
-    arg_parser = ARGUMENTPARSER()
 
-    counter, duplicate_files = find_files(arg_parser.argv.wsroot)
+    counter,_ = find_files(arg_parser.argv.wsroot)
     if counter != 0:
         print(f"Total number of duplicates: {counter}")
         return 0
