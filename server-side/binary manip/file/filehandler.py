@@ -1,0 +1,5 @@
+import os
+
+def extract_filename(filename: str) -> str:
+    return os.path.splitext(filename)[0]
+
