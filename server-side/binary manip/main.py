@@ -1,9 +1,9 @@
 import sys
-import binaryprocess
 from binaryparser import parser
+from file import filehandler
 
 def main() -> int:
-    args = parser.BinArgumentParser()
+    print(filehandler.add_excention("file.txt", ".bin"))
 
     return 0
 
