@@ -2,4 +2,4 @@ FROM cloudflare/cloudflared:latest
 
 EXPOSE 8080 22
 
-CMD ["tunnel", "--no-autoupdate", "run", "--token", "Your key goes here:>"]
+CMD ["tunnel", "--no-autoupdate", "run", "--token", "api_key"]
