@@ -1,0 +1,5 @@
+FROM cloudflare/cloudflared:latest
+
+EXPOSE 8080 22
+
+CMD ["tunnel", "--no-autoupdate", "run", "--token", "api_key"]
