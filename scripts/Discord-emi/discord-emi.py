@@ -40,15 +40,16 @@ def parse_token_file(token_file: str) -> str:
 
     return token
 
-def resolve_abspath(path=None) -> str:
+def resolve_abspath(path) -> str:
     if path is None:
-        return path
+        return ""
 
     return str(pathlib.Path(path).resolve().absolute())
 
 
 def main() -> int:
     discord_argparser = DiscordArgParser()
+
     print(parse_token_file(discord_argparser.args.token_file))
     return 0
 
