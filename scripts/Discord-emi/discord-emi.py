@@ -12,26 +12,33 @@ except ImportError:
 
 class DiscordArgParser:
     def __init__(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument("-t",
-                            "--token",
-                            help="Discord profile Auth Token",
-                            required=True,
-                            type=str,
-                            default=None)
+        self.parser = argparse.ArgumentParser()
+        self.parser.add_argument("-t",
+                                  "--token-file",
+                                  help="path to file containing discord api token",
+                                  required=True,
+                                  type=str,
+                                  default=None)
 
-        parser.add_argument("-s",
-                            "--server-id",
-                            type=str,
-                            default=None)
+        self.parser.add_argument("-s",
+                                 "--server-id",
+                                 type=str,
+                                 default=None)
 
-        parser.add_argument("-d",
-                            "--destination-path",
-                            type=str,
-                            default=None)
+        self.parser.add_argument("-d",
+                                 "--destination-path",
+                                 type=str,
+                                 default=None)
 
-        parser.parse_args(sys.argv[1:])
+        self.args = self.parser.parse_args(sys.argv[1:])
 
+
+def parse_token_file(token_file: str) -> str:
+    token = ""
+    with open(token_file, "r") as tf:
+        token = tf.read().strip()
+
+    return token
 
 def resolve_abspath(path=None) -> str:
     if path is None:
@@ -41,6 +48,8 @@ def resolve_abspath(path=None) -> str:
 
 
 def main() -> int:
+    discord_argparser = DiscordArgParser()
+    print(parse_token_file(discord_argparser.args.token_file))
     return 0
 
 if __name__ == '__main__':
