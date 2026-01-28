@@ -50,7 +50,6 @@ def resolve_abspath(path) -> str:
 def main() -> int:
     discord_argparser = DiscordArgParser()
 
-    print(parse_token_file(discord_argparser.args.token_file))
     return 0
 
 if __name__ == '__main__':
